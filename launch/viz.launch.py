@@ -10,7 +10,7 @@ def generate_launch_description():
             package='rclcpp_components',
             executable='component_container',
             composable_node_descriptions=[composable_node],
-            remappings=[("/apriltag/image", "/camera/image")],
+            remappings=[("/apriltag/image", "/camera1/camera/color/image_raw")],
             output='screen'
     )
 
