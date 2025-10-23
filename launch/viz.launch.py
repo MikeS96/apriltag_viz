@@ -1,16 +1,29 @@
 import launch
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
+    image_topic = LaunchConfiguration("image_topic")
+    detection_topic = LaunchConfiguration("detection_topic")
+
+    image_topic_arg = DeclareLaunchArgument(
+        "image_topic", default_value="/camera1/camera/color/image_raw", description="Input image topic"
+    )
+
+    detection_topic_arg = DeclareLaunchArgument(
+        "detection_topic", default_value="/detections", description="AprilTag detections topic"
+    )
+
     composable_node = ComposableNode(
         name="apriltag_viz",
         package="apriltag_viz",
         plugin="AprilVizNode",
         remappings=[
-            ("image", "/camera1/camera/color/image_raw"),  # relative to node namespace
-            ("detections", "/detections"),
+            ("image", image_topic),
+            ("detections", detection_topic),
         ],
     )
     container = ComposableNodeContainer(
@@ -22,4 +35,4 @@ def generate_launch_description():
         output="screen",
     )
 
-    return launch.LaunchDescription([container])
+    return launch.LaunchDescription([image_topic_arg, detection_topic_arg, container])
